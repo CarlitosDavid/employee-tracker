@@ -3,26 +3,22 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 
-const PORT = process.env.PORT || 3001;
-// create the connection to the database
-const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      port: 3001,
-      user: 'root',
-      password: '',
-      database: 'employees_db'
-    },
-    console.log(`Connected to the employees_db database.`)
-);
+const connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: '',
+    database: 'employees_db'
+});
 
-connection.connect((err) => {
+connection.connect(function (err) {
     if (err) throw err;
 
     console.log("Employee Tracker App");
     mainMenu();
 })
 
+// prompt to main menu giving client choices to choose from
 function mainMenu() {
     inquirer.prompt({
         name: 'action',
@@ -67,7 +63,7 @@ function mainMenu() {
 
 // view employees
 function viewEmployees() {
-    var query = 'Select * FROM employees';
+    var query = 'Select * FROM employee';
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.log(res.length +'employees found');
@@ -78,7 +74,7 @@ function viewEmployees() {
 
 // view all roles 
 function viewRoles() {
-    var query = 'SELECT * FROM roles';
+    var query = 'SELECT * FROM role';
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.table('All Roles:', res);
@@ -88,7 +84,7 @@ function viewRoles() {
 
 // add an employee
 function addEmployee() {
-    connection.query('SELECT * FROM roles', function (err, res) {
+    connection.query('SELECT * FROM role', function (err, res) {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -127,7 +123,7 @@ function addEmployee() {
                 }
             }
             connection.query(
-                'INSERT INTO employees SET ?',
+                'INSERT INTO employee SET ?',
                 {
                     first_name: answer.first_name,
                     last_name: answer.last_name,
@@ -204,7 +200,7 @@ function addRole() {
             }
 
             connection.query(
-                'INSERT INTO roles SET ?',
+                'INSERT INTO role SET ?',
                 {
                     title: answer.new_role,
                     salary: answer.salary,
