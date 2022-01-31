@@ -1,33 +1,44 @@
-const mysql = require("mysql2");
-const inquirer = require("inquirer");
+// get the client 
+const mysql = require('mysql2');
+const inquirer = require('inquirer');
 const cTable = require('console.table');
 
+const PORT = process.env.PORT || 3001;
+// create the connection to the database
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      port: 3001,
+      user: 'root',
+      password: '',
+      database: 'employees_db'
+    },
+    console.log(`Connected to the employees_db database.`)
+);
 
+connection.connect((err) => {
+    if (err) throw err;
 
-const connection = mysql.createConnection ({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: '',
-    database: 'employees_db'
+    console.log("Employee Tracker App");
+    mainMenu();
 })
 
-function options() {
+function mainMenu() {
     inquirer.prompt({
         name: 'action',
         type: 'list',
-        message: 'Employee Database',
+        message: 'Main Menu',
         choices: [
-            'View all employees',
             'View all departments',
             'View all roles',
-            'Add an employee',
+            'View all employees',
             'Add a department',
             'Add a role',
+            'Add an employee',
             'Update employee',
             'Delete an employee',
             'EXIT'
-        ]
+        ],
     }).then(function (answer) {
         switch (answer.action) {
             case 'View all employees': viewEmployees();
@@ -51,12 +62,12 @@ function options() {
             default: 
             break;
         }
-    })
-};
+    });
+}
 
 // view employees
 function viewEmployees() {
-    var query = 'Select * FROM employee';
+    var query = 'Select * FROM employees';
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.log(res.length +'employees found');
@@ -67,7 +78,7 @@ function viewEmployees() {
 
 // view all roles 
 function viewRoles() {
-    var query = 'SELECT * FROM role';
+    var query = 'SELECT * FROM roles';
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.table('All Roles:', res);
@@ -77,7 +88,7 @@ function viewRoles() {
 
 // add an employee
 function addEmployee() {
-    connection.query('SELECT * FROM role', function (err, res) {
+    connection.query('SELECT * FROM roles', function (err, res) {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -116,7 +127,7 @@ function addEmployee() {
                 }
             }
             connection.query(
-                'INSERT INTO employee SET ?',
+                'INSERT INTO employees SET ?',
                 {
                     first_name: answer.first_name,
                     last_name: answer.last_name,
@@ -193,7 +204,7 @@ function addRole() {
             }
 
             connection.query(
-                'INSERT INTO role SET ?',
+                'INSERT INTO roles SET ?',
                 {
                     title: answer.new_role,
                     salary: answer.salary,
