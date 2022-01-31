@@ -37,11 +37,11 @@ function mainMenu() {
         ],
     }).then(function (answer) {
         switch (answer.action) {
-            case 'View all employees': viewEmployees();
+            case 'View all employees': viewEmployee();
             break;
-            case 'View all departments': viewDepartments();
+            case 'View all departments': viewDepartment();
             break;
-            case 'View all roles': viewRoles();
+            case 'View all roles': viewRole();
             break;
             case 'Add an employee': addEmployee();
             break;
@@ -51,7 +51,7 @@ function mainMenu() {
             break;
             case 'Update employee role': updateRole();
             break;
-            case 'Delete an employuee': deleteEmployee();
+            case 'Delete an employee': deleteEmployee();
             break;
             case 'EXIT': exitApp();
             break;
@@ -61,9 +61,19 @@ function mainMenu() {
     });
 }
 
+function viewDepartment() {
+    var query = `SELECT * FROM departments`;
+    connection.query(query, function(err, res) {
+        if (err) throw err; 
+        console.log(res.length + 'deparments found');
+        console.table('All departments:', res);
+        options();
+    })
+};
+
 // view employees
-function viewEmployees() {
-    var query = 'Select * FROM employee';
+function viewEmployee() {
+    var query = `Select * FROM employees`;
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.log(res.length +'employees found');
@@ -73,8 +83,8 @@ function viewEmployees() {
 };
 
 // view all roles 
-function viewRoles() {
-    var query = 'SELECT * FROM role';
+function viewRole() {
+    var query = `SELECT * FROM roles`;
     connection.query(query, function(err, res) {
         if (err) throw err; 
         console.table('All Roles:', res);
@@ -84,7 +94,7 @@ function viewRoles() {
 
 // add an employee
 function addEmployee() {
-    connection.query('SELECT * FROM role', function (err, res) {
+    connection.query(`SELECT * FROM roles`, function (err, res) {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -150,14 +160,14 @@ function addDepartment() {
         }
     ]). then(function (answer) {
         connection.query(
-            'INSERT INTO department SET ?',
+            `INSERT INTO department SET ?`,
             {
-                name: answer.newDepartment
+                names: answer.newDepartment
             }
         );
-        var query = 'SELECT * FROM department';
+        var query = `SELECT * FROM department`;
         connection.query(query, function(err, res) {
-            if(err)throw err;
+            if(err) throw err;
             console.log('Your department has been added');
             console.table('All Departments:', res);
             options();
@@ -167,7 +177,7 @@ function addDepartment() {
 
 //add roles
 function addRole() {
-    connection.query('SELECT * FROM department', function(err, res) {
+    connection.query(`SELECT * FROM department`, function(err, res) {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -200,7 +210,7 @@ function addRole() {
             }
 
             connection.query(
-                'INSERT INTO role SET ?',
+                `INSERT INTO role SET ?`,
                 {
                     title: answer.new_role,
                     salary: answer.salary,
@@ -209,7 +219,7 @@ function addRole() {
                 function (err, res) {
                     if (err)throw err; 
                     console.log('Your new role has been added');
-                    console.table('All Roles', res);
+                    console.table('All Role', res);
                     options();
                 }
             )

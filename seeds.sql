@@ -1,11 +1,11 @@
 USE employees_db;
 
-INSERT INTO department (name)
+INSERT INTO department (names)
 VALUES 
 ("Feild work"),
 ("Office")
 
-INSERT INTO role (title, salary, department_id) 
+INSERT INTO roles (title, salary, department_id) 
 VALUES
   ("operator", 120000, 1),
   ("office manager", 100000, 2),
